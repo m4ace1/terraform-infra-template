@@ -1,0 +1,143 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">= 4.0"
+    }
+  }
+}
+
+locals {
+  RESOURCES_PREFIX = "${lower(var.ENV)}-farmers-connect"
+  ACCOUNTID        = data.aws_caller_identity.current.account_id
+  INFO_EMAIL       = "info@email.com"
+
+  DOMAIN_NAME = "api.${var.WEBAPP_DNS}"
+  # cognito_domain_name        = lower(var.ENV) == "prod" ? "auth.${var.WEBAPP_DNS}" : "auth.${var.WEBAPP_DNS}"
+  cognito_domain_name = var.WEBAPP_DNS
+  common_tags = {
+    environment = var.ENV
+    project     = "m4ace"
+    managedby   = "cloud@email.com"
+  }
+}
+
+
+module "roles" {
+  source           = "./modules/roles"
+  ENV              = var.ENV
+  AWS_REGION       = var.region
+  RESOURCES_PREFIX = local.RESOURCES_PREFIX
+
+}
+
+# POlicy
+module "policy" {
+  source                                     = "./modules/policy"
+  ENV                                        = var.ENV
+  AWS_REGION                                 = var.region
+  RESOURCES_PREFIX                           = local.RESOURCES_PREFIX
+  CURRENT_ACCOUNT_ID                         = data.aws_caller_identity.current.account_id
+   SIGN_UP_FUNCTION_ROLE_NAME                 = module.roles.SIGN_UP_FUNCTION_ROLE_NAME
+}
+
+
+# Lambda
+module "lambda" {
+  source                    = "./modules/lambda"
+  ENV                       = var.ENV
+  AWS_REGION                = var.region
+  RESOURCES_PREFIX          = local.RESOURCES_PREFIX
+  USER_TABLE_NAME           = module.dynamodb.table_name
+  CLIENT_ID = module.cognito_end_user.COGNITO_USER_CLIENT_ID_A
+  POOL_ID = module.cognito_end_user.COGNITO_USER_POOL_ID
+  CLIENT_SECRET = module.cognito_end_user.COGNITO_USER_CLIENT_SECRET_A
+
+
+  LAMBDA_JAVASCRIPT_VERSION                 = var.LAMBDA_JAVASCRIPT_VERSION
+  LAMBDA_PYTHON_VERSION                     = var.LAMBDA_PYTHON_VERSION
+  SIGN_UP_FUNCTION_ROLE_ARN                 = module.roles.SIGN_UP_FUNCTION_ROLE_ARN
+
+  # ================================== CORE FUNCTIONS=================================     
+    }
+
+
+# DYNAMODB TABLE
+module "dynamodb" {
+  source           = "./modules/dynamodb/user_table"
+  ENV              = var.ENV
+  AWS_REGION       = var.region
+  RESOURCES_PREFIX = local.RESOURCES_PREFIX
+  table_name       = "user_table"
+}
+
+
+# module "core" {
+#   source                                            = "./modules/core"
+#   ENV                                               = var.ENV
+#   RESOURCES_PREFIX                                  = local.RESOURCES_PREFIX
+#   CURRENT_ACCOUNT_ID                                = data.aws_caller_identity.current.account_id
+#   API_DOMAIN_NAME                                   = local.DOMAIN_NAME
+#   LAMBDA_CREATE_LINK_FUNCTION_ARN                   = module.lambda.LAMBDA_CREATE_LINK_FUNCTION_ARN
+ 
+#   LAMBDA_NAMES = [
+   
+#   ] 
+# }
+
+module "open" {
+  source                                      = "./modules/open"
+  ENV                                         = var.ENV
+  RESOURCES_PREFIX                            = local.RESOURCES_PREFIX
+  CURRENT_ACCOUNT_ID                          = data.aws_caller_identity.current.account_id
+  API_DOMAIN_NAME                             = local.DOMAIN_NAME
+  LAMBDA_SIGN_UP_FUNCTION_ARN                 = module.lambda.LAMBDA_SIGN_UP_FUNCTION_ARN
+   CERTIFICATE_ARN                             = var.WEBAPP_CERT_ARN
+
+  LAMBDA_NAMES = [
+    module.lambda.LAMBDA_SIGN_UP_FUNCTION_NAME,
+  ]
+}
+
+
+module "cognito_end_user" {
+  source                                 = "./modules/cognito"
+  ENV                                    = var.ENV
+  COMMON_TAGS                            = local.common_tags
+  EMAIL_SENDER                           = local.INFO_EMAIL
+  IAM_COGNITO_ASSUMABLE_ROLE_EXTERNAL_ID = var.IAM_COGNITO_ASSUMABLE_ROLE_EXTERNAL_ID
+  AWS_REGION                             = data.aws_region.current.name
+  CURRENT_ACCOUNT_ID                     = local.ACCOUNTID
+  WEBAPP_DNS                             = var.WEBAPP_DNS
+  COGNITO_GROUP_LIST                     = var.COGNITO_GROUP_LIST
+  RESOURCE_PREFIX                        = local.RESOURCES_PREFIX
+  BUCKET_NAME                            = "bucket" #module.s3.MESSAGING_BUCKET_NAME
+  RESOURCE                               = "end_user"
+  PYTHON_LAMBDA_VERSION                  = var.LAMBDA_PYTHON_VERSION
+  COGNITO_DOMAIN_NAME                    = local.cognito_domain_name
+  RESEND_API_KEY                         = var.RESEND_API_KEY
+  USER_TABLE_NAME                        = module.dynamodb.table_name
+
+}
+
+# module "s3" {
+#   source           = "./modules/s3"
+#   RESOURCES_PREFIX = local.RESOURCES_PREFIX
+# }
+
+
+##==================================================
+#  SES creation..
+##==================================================
+
+# module "ses" {
+#   source     = "./modules/ses"
+#   FEMI_EMAIL = local.FEMI_EMAIL
+#   INFO_EMAIL = local.INFO_EMAIL
+# }
+
+
+
+
+
+
