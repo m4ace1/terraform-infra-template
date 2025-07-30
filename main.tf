@@ -43,7 +43,7 @@ module "lambda" {
   ENV                       = var.ENV
   AWS_REGION                = var.region
   RESOURCES_PREFIX          = local.RESOURCES_PREFIX
-  USER_TABLE_NAME           = module.dynamodb.table_name
+  USER_TABLE_NAME           = module.user_table.table_name
   CLIENT_ID = module.cognito_end_user.COGNITO_USER_CLIENT_ID_A
   POOL_ID = module.cognito_end_user.COGNITO_USER_POOL_ID
   CLIENT_SECRET = module.cognito_end_user.COGNITO_USER_CLIENT_SECRET_A
@@ -120,7 +120,7 @@ module "cognito_end_user" {
   PYTHON_LAMBDA_VERSION                  = var.LAMBDA_PYTHON_VERSION
   COGNITO_DOMAIN_NAME                    = local.cognito_domain_name
   RESEND_API_KEY                         = var.RESEND_API_KEY
-  USER_TABLE_NAME                        = module.dynamodb.table_name
+  USER_TABLE_NAME                        = module.user_table.table_name
 
 }
 
