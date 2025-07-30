@@ -1,11 +1,4 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = ">= 4.0"
-    }
-  }
-}
+
 
 locals {
   RESOURCES_PREFIX = "${lower(var.ENV)}-farmers-connect"
@@ -39,6 +32,8 @@ module "policy" {
   RESOURCES_PREFIX                           = local.RESOURCES_PREFIX
   CURRENT_ACCOUNT_ID                         = data.aws_caller_identity.current.account_id
    SIGN_UP_FUNCTION_ROLE_NAME                 = module.roles.SIGN_UP_FUNCTION_ROLE_NAME
+  CONFIRM_SIGN_UP_FUNCTION_ROLE_NAME                 = module.roles.CONFIRM_SIGN_UP_FUNCTION_ROLE_NAME
+
 }
 
 
@@ -57,20 +52,27 @@ module "lambda" {
   LAMBDA_JAVASCRIPT_VERSION                 = var.LAMBDA_JAVASCRIPT_VERSION
   LAMBDA_PYTHON_VERSION                     = var.LAMBDA_PYTHON_VERSION
   SIGN_UP_FUNCTION_ROLE_ARN                 = module.roles.SIGN_UP_FUNCTION_ROLE_ARN
+  CONFIRM_SIGN_UP_FUNCTION_ROLE_ARN                 = module.roles.CONFIRM_SIGN_UP_FUNCTION_ROLE_ARN
 
   # ================================== CORE FUNCTIONS=================================     
     }
 
 
 # DYNAMODB TABLE
-module "dynamodb" {
+module "user_table" {
   source           = "./modules/dynamodb/user_table"
   ENV              = var.ENV
   AWS_REGION       = var.region
   RESOURCES_PREFIX = local.RESOURCES_PREFIX
   table_name       = "user_table"
 }
-
+module "product_table" {
+  source           = "./modules/dynamodb/product_table"
+  ENV              = var.ENV
+  AWS_REGION       = var.region
+  RESOURCES_PREFIX = local.RESOURCES_PREFIX
+  table_name       = "product_table"
+}
 
 # module "core" {
 #   source                                            = "./modules/core"
@@ -92,10 +94,12 @@ module "open" {
   CURRENT_ACCOUNT_ID                          = data.aws_caller_identity.current.account_id
   API_DOMAIN_NAME                             = local.DOMAIN_NAME
   LAMBDA_SIGN_UP_FUNCTION_ARN                 = module.lambda.LAMBDA_SIGN_UP_FUNCTION_ARN
-   CERTIFICATE_ARN                             = var.WEBAPP_CERT_ARN
+  LAMBDA_CONFIRM_SIGN_UP_FUNCTION_ARN = module.lambda.LAMBDA_CONFIRM_SIGN_UP_FUNCTION_ARN
+
 
   LAMBDA_NAMES = [
     module.lambda.LAMBDA_SIGN_UP_FUNCTION_NAME,
+    module.lambda.LAMBDA_CONFIRM_SIGN_UP_FUNCTION_NAME
   ]
 }
 

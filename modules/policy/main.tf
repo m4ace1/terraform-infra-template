@@ -1,7 +1,7 @@
-resource "aws_iam_policy" "noughttrapper_lambda_policy" {
-  name        = "noughtraper_lambda_policy"
+resource "aws_iam_policy" "m4ace_lambda_policy" {
+  name        = "m4ace_lambda_policy"
   path        = "/"
-  description = "noughtraper_lambda_policy"
+  description = "m4ace_lambda_policy"
 
   # Terraform's "jsonencode" function converts a
   # Terraform expression result to valid JSON syntax.
@@ -109,7 +109,7 @@ resource "aws_iam_policy" "noughttrapper_lambda_policy" {
           "s3:GetObject",
           "s3:ListObjects"
         ],
-        "Resource" : "arn:aws:s3:::m4ace-email-template/email_templates/*"
+        "Resource" : "*"
       }
 
     ]
@@ -120,5 +120,9 @@ resource "aws_iam_policy" "noughttrapper_lambda_policy" {
 # ROLE POLICY ATTACHMENT
 resource "aws_iam_role_policy_attachment" "lambda_signup_function_attachment" {
   role       = var.SIGN_UP_FUNCTION_ROLE_NAME
-  policy_arn = aws_iam_policy.noughttrapper_lambda_policy.arn
+  policy_arn = aws_iam_policy.m4ace_lambda_policy.arn
+}
+resource "aws_iam_role_policy_attachment" "lambda_confirm_signup_function_attachment" {
+  role       = var.CONFIRM_SIGN_UP_FUNCTION_ROLE_NAME
+  policy_arn = aws_iam_policy.m4ace_lambda_policy.arn
 }

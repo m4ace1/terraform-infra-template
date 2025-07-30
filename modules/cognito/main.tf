@@ -1,6 +1,6 @@
 #creates the userpool
 resource "aws_cognito_user_pool" "congito_end_user_userpool" {
-  name                       = "${var.RESOURCE_PREFIX}-${var.RESOURCE}-userpool"
+  name                       = "${var.RESOURCE_PREFIX}-userpool"
   alias_attributes           = ["preferred_username"]
   auto_verified_attributes   = ["email"]
   mfa_configuration          = "OPTIONAL"
@@ -22,7 +22,7 @@ resource "aws_cognito_user_pool" "congito_end_user_userpool" {
 
   verification_message_template {
     default_email_option  = "CONFIRM_WITH_CODE"
-    email_message         = "Hello {given_name}, Welcome, your journey starts here! Your Verification Code is: {####} If you need any assistance please contact us at support@m4ace.com. We are here to assist. Regards, m4ace Team"
+    email_message         = "Hello {custom:first_name}, Welcome, your journey starts here! Your Verification Code is: {####} If you need any assistance please contact us at support@m4ace.com. We are here to assist. Regards, m4ace Team"
     email_message_by_link = "Hello,<br/><br/>You organisation account owner has created a ${var.RESOURCE_PREFIX} account for you on the <b>OAF</b> platform.<br/><br/>Please click the link below to verify your email address on the platform. {##Verify Email##}<br/><br/> You will receive a separate email address with your login details<br/><br/>Welcome to m4ace<br/><br/>"
     email_subject         = "[m4ace] Registration Email Verification"
     email_subject_by_link = "Welcome to m4ace"
@@ -76,7 +76,18 @@ resource "aws_cognito_user_pool" "congito_end_user_userpool" {
     }
   }
   schema {
-    name                     = "given_name"
+    name                     = "role"
+    attribute_data_type      = "String"
+    developer_only_attribute = false
+    mutable                  = true  # false for "sub"
+    required                 = false # true for "sub"
+    string_attribute_constraints {
+      min_length = 0
+      max_length = 2048
+    }
+  }
+  schema {
+    name                     = "first_name"
     attribute_data_type      = "String"
     developer_only_attribute = false
     mutable                  = true  # false for "sub"
@@ -99,43 +110,7 @@ resource "aws_cognito_user_pool" "congito_end_user_userpool" {
     }
   }
 
-  schema {
-    name                     = "mfa_type"
-    attribute_data_type      = "String"
-    developer_only_attribute = false
-    mutable                  = true  # false for "sub"
-    required                 = false # true for "sub"
-    string_attribute_constraints {
-      min_length = 0
-      max_length = 2048
-    }
-  }
-
-  schema {
-    name                     = "mfa_setup"
-    attribute_data_type      = "String"
-    developer_only_attribute = false
-    mutable                  = true  # false for "sub"
-    required                 = false # true for "sub"
-    string_attribute_constraints {
-      min_length = 0
-      max_length = 2048
-    }
-  }
-
-  # schema {
-  #     name                     = "type"
-  #     attribute_data_type      = "String"
-  #     developer_only_attribute = false
-  #     mutable                  = true  # false for "sub"
-  #     required                 = false # true for "sub"
-  #     string_attribute_constraints {
-  #       min_length = 0
-  #       max_length = 2048
-  #     }
-  #   }
-
-  schema {
+    schema {
     name                     = "completed_setup"
     attribute_data_type      = "Boolean"
     developer_only_attribute = false
@@ -251,7 +226,7 @@ EOF
 
 
 resource "aws_cognito_user_group" "cognito-user-groups" {
-  description  = "user group managed by cloud@noughtaegis.com with terraform"
+  description  = "user group managed by cloud@m4ace.com with terraform"
   name         = var.COGNITO_GROUP_LIST
   user_pool_id = aws_cognito_user_pool.congito_end_user_userpool.id
 }
@@ -330,7 +305,7 @@ resource "aws_lambda_function" "custom_message" {
     variables = {
       ENV            = "${var.ENV}"
       BUCKET_NAME    = "${var.BUCKET_NAME}"
-      RESEND_API_KEY = var.RESEND_API_KEY
+      # RESEND_API_KEY = var.RESEND_API_KEY
     }
   }
   layers = ["${aws_lambda_layer_version.request_layer.arn}"]

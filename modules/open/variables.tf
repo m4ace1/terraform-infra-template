@@ -14,9 +14,9 @@ variable "API_DOMAIN_NAME" {
 }
 
 
-variable "CERTIFICATE_ARN" {
-  description = "The ARN of the ACM certificate for HTTPS"
-}
 
 
 variable "LAMBDA_SIGN_UP_FUNCTION_ARN" {}
+variable "LAMBDA_CONFIRM_SIGN_UP_FUNCTION_ARN" {
+  
+}

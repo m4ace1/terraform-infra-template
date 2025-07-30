@@ -1,5 +1,7 @@
 locals {
   LAMBDA_VERSION = "v1"
+  layers = ["${aws_lambda_layer_version.javascript_layer.arn}", "${aws_lambda_layer_version.mongoose_layer.arn}"]
+
 }
 
 ################################################################################
@@ -65,7 +67,7 @@ O   O  P      E      N  NN
 
 
 # =================================================================
-# Create a Lambda function for create_link
+# Create a Lambda function for signup
 # =========================================================================
 resource "aws_lambda_function" "signup_function" {
   filename         = "${path.module}/codes/zip/signup.zip"
@@ -83,9 +85,35 @@ resource "aws_lambda_function" "signup_function" {
       POOL_ID = var.POOL_ID
       CLIENT_ID = var.CLIENT_ID
       CLIENT_SECRET = var.CLIENT_SECRET
-      # LINKS_TABLE = "${var.LINKS_TABLE}"
+      MONGODB_URI = var.MONGODB_URI
 
     }
   }
-  layers = ["${aws_lambda_layer_version.javascript_layer.arn}", "${aws_lambda_layer_version.mongoose_layer.arn}"]
+  layers = local.layers
+}
+
+
+# =================================================================
+# Create a Lambda function for confirm signup
+# =========================================================================
+resource "aws_lambda_function" "confirm_signup_function" {
+  filename         = "${path.module}/codes/zip/confirm-signup.zip"
+  function_name    = "${var.RESOURCES_PREFIX}-confirm-signup-${local.LAMBDA_VERSION}"
+  role             = var.CONFIRM_SIGN_UP_FUNCTION_ROLE_ARN
+  handler          = "confirm-signup.lambda_handler"
+  source_code_hash = data.archive_file.lambda_confirm_signup_archive.output_base64sha256
+  runtime          = var.LAMBDA_JAVASCRIPT_VERSION
+  timeout          = 180
+  memory_size      = 1024
+
+  environment {
+    variables = {
+      ENV         = "${var.ENV}"
+      POOL_ID = var.POOL_ID
+      CLIENT_ID = var.CLIENT_ID
+      CLIENT_SECRET = var.CLIENT_SECRET
+      MONGODB_URI = var.MONGODB_URI
+    }
+  }
+  layers = local.layers
 }

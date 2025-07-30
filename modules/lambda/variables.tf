@@ -6,11 +6,16 @@ variable "RESOURCES_PREFIX" {}
 variable "USER_TABLE_NAME" {
   
 }
-variable "SIGN_UP_FUNCTION_ROLE_ARN" {}
-
+variable "MONGODB_URI" {
+  default = "put your uri here"
+}
 variable "CLIENT_SECRET" {
 }
 variable "CLIENT_ID" {
 }
 variable "POOL_ID" {
+}
+variable "SIGN_UP_FUNCTION_ROLE_ARN" {}
+variable "CONFIRM_SIGN_UP_FUNCTION_ROLE_ARN" {
+  
 }
