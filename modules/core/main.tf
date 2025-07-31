@@ -1,9 +1,9 @@
 data "template_file" "swagger" {
   template = file("${path.module}/swagger/swagger.yml")
   vars = {
-    ACCOUNTID                                         = "${var.CURRENT_ACCOUNT_ID}"
-    ENV                                               = "${var.ENV}"
-    basePath                                          = "${var.BASE_PATH}"
+    ACCOUNTID = "${var.CURRENT_ACCOUNT_ID}"
+    ENV       = "${var.ENV}"
+    basePath  = "${var.BASE_PATH}"
   }
 }
 

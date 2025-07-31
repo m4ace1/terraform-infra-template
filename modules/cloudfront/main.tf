@@ -4,7 +4,7 @@ resource "aws_cloudfront_origin_access_control" "cloudfront" {
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"
-  
+
 }
 
 resource "aws_cloudfront_distribution" "s3_noughttrapper_pdf_storage" {
@@ -15,11 +15,11 @@ resource "aws_cloudfront_distribution" "s3_noughttrapper_pdf_storage" {
     origin_id                = "distribution"
   }
 
-  enabled             = true
+  enabled = true
 
-viewer_certificate {
-  cloudfront_default_certificate = true
-}
+  viewer_certificate {
+    cloudfront_default_certificate = true
+  }
   default_cache_behavior {
     allowed_methods  = ["GET", "HEAD"]
     cached_methods   = ["GET", "HEAD"]
@@ -32,42 +32,42 @@ viewer_certificate {
         forward = "none"
       }
     }
- # Define additional cache behaviors for specific path patterns
-  # cache_behavior {
-  #   path_pattern          = "/images/*"
-  #   allowed_methods      = ["GET", "HEAD"]
-  #   cached_methods       = ["GET", "HEAD"]
-  #   target_origin_id     = "distribution"
-  #   min_ttl              = 0
-  #   default_ttl          = 3600
-  #   max_ttl              = 86400
-  #   viewer_protocol_policy = "redirect-to-https"
+    # Define additional cache behaviors for specific path patterns
+    # cache_behavior {
+    #   path_pattern          = "/images/*"
+    #   allowed_methods      = ["GET", "HEAD"]
+    #   cached_methods       = ["GET", "HEAD"]
+    #   target_origin_id     = "distribution"
+    #   min_ttl              = 0
+    #   default_ttl          = 3600
+    #   max_ttl              = 86400
+    #   viewer_protocol_policy = "redirect-to-https"
 
-  #   forwarded_values {
-  #     query_string = false
-  #     cookies {
-  #       forward = "none"
-  #     }
-  #   }
-  # }
+    #   forwarded_values {
+    #     query_string = false
+    #     cookies {
+    #       forward = "none"
+    #     }
+    #   }
+    # }
 
-  # cache_behavior {
-  #   path_pattern          = "/api/*"
-  #   allowed_methods      = ["GET", "HEAD", "OPTIONS"]
-  #   cached_methods       = ["GET", "HEAD", "OPTIONS"]
-  #   target_origin_id     = "distribution"
-  #   min_ttl              = 0
-  #   default_ttl          = 0
-  #   max_ttl              = 0
-  #   viewer_protocol_policy = "https-only"
+    # cache_behavior {
+    #   path_pattern          = "/api/*"
+    #   allowed_methods      = ["GET", "HEAD", "OPTIONS"]
+    #   cached_methods       = ["GET", "HEAD", "OPTIONS"]
+    #   target_origin_id     = "distribution"
+    #   min_ttl              = 0
+    #   default_ttl          = 0
+    #   max_ttl              = 0
+    #   viewer_protocol_policy = "https-only"
 
-  #   forwarded_values {
-  #     query_string = true
-  #     cookies {
-  #       forward = "none"
-  #     }
-  #   }
-  # }
+    #   forwarded_values {
+    #     query_string = true
+    #     cookies {
+    #       forward = "none"
+    #     }
+    #   }
+    # }
     viewer_protocol_policy = "allow-all"
     min_ttl                = 0
     default_ttl            = 3600
@@ -76,15 +76,15 @@ viewer_certificate {
 
   price_class = "PriceClass_200"
 
-restrictions {
-        geo_restriction {
-        restriction_type = "none"
-        locations = []
-        }
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+      locations        = []
     }
-tags = {
+  }
+  tags = {
     Environment = "production"
-    Name = "Frontend App"
+    Name        = "Frontend App"
   }
 }
 
@@ -102,18 +102,18 @@ resource "aws_s3_bucket_policy" "cloudfront_access" {
     Version = "2012-10-17",
     Statement = [
       {
-        Sid = "AllowCloudFrontServicePrincipalReadOnly",
+        Sid    = "AllowCloudFrontServicePrincipalReadOnly",
         Effect = "Allow",
         Principal = {
           Service = "cloudfront.amazonaws.com"
         },
-        Action = "s3:GetObject",
+        Action   = "s3:GetObject",
         Resource = "${var.NOUGHTTRAPPER_PDF_STORAGE_ARN}/*",
         Condition = {
           StringEquals = {
             "AWS:SourceArn" = aws_cloudfront_distribution.s3_noughttrapper_pdf_storage.arn
 
-            
+
           }
         }
       }

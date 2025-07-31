@@ -56,8 +56,8 @@ variable "WEBAPP_CERT" {
 variable "WEBAPP_CERT_ARN" {
   type    = string
   default = "kjsn"
-  }
+}
 variable "RESEND_API_KEY" {
   default = "JJJ"
-  }
+}
 

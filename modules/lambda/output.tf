@@ -17,3 +17,13 @@ output "LAMBDA_CONFIRM_SIGN_UP_FUNCTION_ARN" {
 output "LAMBDA_CONFIRM_SIGN_UP_FUNCTION_NAME" {
   value = aws_lambda_function.confirm_signup_function.function_name
 }
+
+# =================================================================
+#  CONFIRM FORGOT PASSWORD
+# =================================================================
+output "LAMBDA_CONFIRM_FORGOT_PASSWORD_FUNCTION_ARN" {
+  value = aws_lambda_function.confirm_forgot_password_function.arn
+}
+output "LAMBDA_CONFIRM_SIGN_UP_FUNCTION_NAME" {
+  value = aws_lambda_function.confirm_forgot_password_function.function_name
+}

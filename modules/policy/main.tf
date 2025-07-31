@@ -100,7 +100,7 @@ resource "aws_iam_policy" "m4ace_lambda_policy" {
         "Action" : [
           "ses:*"
         ],
-        "Resource" : ["*" ]
+        "Resource" : ["*"]
       },
       {
         "Effect" : "Allow",
@@ -124,5 +124,10 @@ resource "aws_iam_role_policy_attachment" "lambda_signup_function_attachment" {
 }
 resource "aws_iam_role_policy_attachment" "lambda_confirm_signup_function_attachment" {
   role       = var.CONFIRM_SIGN_UP_FUNCTION_ROLE_NAME
+  policy_arn = aws_iam_policy.m4ace_lambda_policy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_confirm_forgot_password_function_attachment" {
+  role       = var.CONFIRM_FORGOT_PASSWORD_FUNCTION_ROLE_NAME
   policy_arn = aws_iam_policy.m4ace_lambda_policy.arn
 }
