@@ -31,31 +31,33 @@ module "policy" {
   AWS_REGION                                 = var.region
   RESOURCES_PREFIX                           = local.RESOURCES_PREFIX
   CURRENT_ACCOUNT_ID                         = data.aws_caller_identity.current.account_id
-   SIGN_UP_FUNCTION_ROLE_NAME                 = module.roles.SIGN_UP_FUNCTION_ROLE_NAME
-  CONFIRM_SIGN_UP_FUNCTION_ROLE_NAME                 = module.roles.CONFIRM_SIGN_UP_FUNCTION_ROLE_NAME
+  SIGN_UP_FUNCTION_ROLE_NAME                 = module.roles.SIGN_UP_FUNCTION_ROLE_NAME
+  CONFIRM_SIGN_UP_FUNCTION_ROLE_NAME         = module.roles.CONFIRM_SIGN_UP_FUNCTION_ROLE_NAME
+  CONFIRM_FORGOT_PASSWORD_FUNCTION_ROLE_NAME = module.roles.CONFIRM_FORGOT_PASSWORD_FUNCTION_ROLE_NAME
 
 }
 
 
 # Lambda
 module "lambda" {
-  source                    = "./modules/lambda"
-  ENV                       = var.ENV
-  AWS_REGION                = var.region
-  RESOURCES_PREFIX          = local.RESOURCES_PREFIX
-  USER_TABLE_NAME           = module.user_table.table_name
-  CLIENT_ID = module.cognito_end_user.COGNITO_USER_CLIENT_ID_A
-  POOL_ID = module.cognito_end_user.COGNITO_USER_POOL_ID
-  CLIENT_SECRET = module.cognito_end_user.COGNITO_USER_CLIENT_SECRET_A
+  source           = "./modules/lambda"
+  ENV              = var.ENV
+  AWS_REGION       = var.region
+  RESOURCES_PREFIX = local.RESOURCES_PREFIX
+  USER_TABLE_NAME  = module.user_table.table_name
+  CLIENT_ID        = module.cognito_end_user.COGNITO_USER_CLIENT_ID_A
+  POOL_ID          = module.cognito_end_user.COGNITO_USER_POOL_ID
+  CLIENT_SECRET    = module.cognito_end_user.COGNITO_USER_CLIENT_SECRET_A
 
 
   LAMBDA_JAVASCRIPT_VERSION                 = var.LAMBDA_JAVASCRIPT_VERSION
   LAMBDA_PYTHON_VERSION                     = var.LAMBDA_PYTHON_VERSION
   SIGN_UP_FUNCTION_ROLE_ARN                 = module.roles.SIGN_UP_FUNCTION_ROLE_ARN
-  CONFIRM_SIGN_UP_FUNCTION_ROLE_ARN                 = module.roles.CONFIRM_SIGN_UP_FUNCTION_ROLE_ARN
+  CONFIRM_SIGN_UP_FUNCTION_ROLE_ARN         = module.roles.CONFIRM_SIGN_UP_FUNCTION_ROLE_ARN
+  CONFIRM_FORGOT_PASSWORD_FUNCTION_ROLE_ARN = module.roles.CONFIRM_FORGOT_PASSWORD_FUNCTION_ROLE_ARN
 
   # ================================== CORE FUNCTIONS=================================     
-    }
+}
 
 
 # DYNAMODB TABLE
@@ -81,9 +83,9 @@ module "product_table" {
 #   CURRENT_ACCOUNT_ID                                = data.aws_caller_identity.current.account_id
 #   API_DOMAIN_NAME                                   = local.DOMAIN_NAME
 #   LAMBDA_CREATE_LINK_FUNCTION_ARN                   = module.lambda.LAMBDA_CREATE_LINK_FUNCTION_ARN
- 
+
 #   LAMBDA_NAMES = [
-   
+
 #   ] 
 # }
 
@@ -94,12 +96,14 @@ module "open" {
   CURRENT_ACCOUNT_ID                          = data.aws_caller_identity.current.account_id
   API_DOMAIN_NAME                             = local.DOMAIN_NAME
   LAMBDA_SIGN_UP_FUNCTION_ARN                 = module.lambda.LAMBDA_SIGN_UP_FUNCTION_ARN
-  LAMBDA_CONFIRM_SIGN_UP_FUNCTION_ARN = module.lambda.LAMBDA_CONFIRM_SIGN_UP_FUNCTION_ARN
+  LAMBDA_CONFIRM_SIGN_UP_FUNCTION_ARN         = module.lambda.LAMBDA_CONFIRM_SIGN_UP_FUNCTION_ARN
+  LAMBDA_CONFIRM_FORGOT_PASSWORD_FUNCTION_ARN = module.lambda.LAMBDA_CONFIRM_FORGOT_PASSWORD_FUNCTION_ARN
 
 
   LAMBDA_NAMES = [
     module.lambda.LAMBDA_SIGN_UP_FUNCTION_NAME,
-    module.lambda.LAMBDA_CONFIRM_SIGN_UP_FUNCTION_NAME
+    module.lambda.LAMBDA_CONFIRM_SIGN_UP_FUNCTION_NAME,
+    module.lambda.LAMBDA_CONFIRM_FORGOT_PASSWORD_FUNCTION_NAME
   ]
 }
 
@@ -139,9 +143,3 @@ module "cognito_end_user" {
 #   FEMI_EMAIL = local.FEMI_EMAIL
 #   INFO_EMAIL = local.INFO_EMAIL
 # }
-
-
-
-
-
-

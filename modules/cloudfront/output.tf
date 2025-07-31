@@ -10,4 +10,4 @@ output "cloudfront_url" {
 
 output "cloudfront_distribution_arn" {
   value = aws_cloudfront_distribution.s3_noughttrapper_pdf_storage.arn
-  }
+}

@@ -1,13 +1,14 @@
 data "template_file" "swagger" {
   template = file("${path.module}/swagger/swagger.yml")
   vars = {
-    ACCOUNTID                          = "${var.CURRENT_ACCOUNT_ID}"
-    ENV                                = "${var.ENV}"
-    basePath                           = "${var.BASE_PATH}"
-    LAMBDA_SIGN_UP_FUNCTION_ARN        = "${var.LAMBDA_SIGN_UP_FUNCTION_ARN}"
-    LAMBDA_CONFIRM_SIGN_UP_FUNCTION_ARN = var.LAMBDA_CONFIRM_SIGN_UP_FUNCTION_ARN
+    ACCOUNTID                                   = "${var.CURRENT_ACCOUNT_ID}"
+    ENV                                         = "${var.ENV}"
+    basePath                                    = "${var.BASE_PATH}"
+    LAMBDA_SIGN_UP_FUNCTION_ARN                 = "${var.LAMBDA_SIGN_UP_FUNCTION_ARN}"
+    LAMBDA_CONFIRM_SIGN_UP_FUNCTION_ARN         = var.LAMBDA_CONFIRM_SIGN_UP_FUNCTION_ARN
+    LAMBDA_CONFIRM_FORGOT_PASSWORD_FUNCTION_ARN = var.LAMBDA_CONFIRM_FORGOT_PASSWORD_FUNCTION_ARN
 
-    }
+  }
 }
 
 resource "aws_api_gateway_rest_api" "api_gateway" {

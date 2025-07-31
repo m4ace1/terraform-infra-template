@@ -110,7 +110,7 @@ resource "aws_cognito_user_pool" "congito_end_user_userpool" {
     }
   }
 
-    schema {
+  schema {
     name                     = "completed_setup"
     attribute_data_type      = "Boolean"
     developer_only_attribute = false
@@ -303,8 +303,8 @@ resource "aws_lambda_function" "custom_message" {
 
   environment {
     variables = {
-      ENV            = "${var.ENV}"
-      BUCKET_NAME    = "${var.BUCKET_NAME}"
+      ENV         = "${var.ENV}"
+      BUCKET_NAME = "${var.BUCKET_NAME}"
       # RESEND_API_KEY = var.RESEND_API_KEY
     }
   }
