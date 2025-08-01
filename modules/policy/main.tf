@@ -127,7 +127,7 @@ resource "aws_iam_role_policy_attachment" "lambda_signup_function_attachment" {
 # ROLE POLICY ATTACHMENT
 resource "aws_iam_role_policy_attachment" "lambda_forgot_password_function_attachment" {
   role       = var.FORGOT_PASSWORD_FUNCTION_ROLE_NAME
-  policy_arn = aws_iam_policy.noughttrapper_lambda_policy.arn
+  policy_arn = aws_iam_policy.m4ace_lambda_policy.arn
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_confirm_signup_function_attachment" {
@@ -144,4 +144,3 @@ resource "aws_iam_role_policy_attachment" "lambda_login_function_attachment" {
   role       = var.LOGIN_FUNCTION_ROLE_NAME
   policy_arn = aws_iam_policy.m4ace_lambda_policy.arn
 }
-

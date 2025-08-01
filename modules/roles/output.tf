@@ -34,7 +34,7 @@ output "CONFIRM_SIGN_UP_FUNCTION_ROLE_NAME" {
 output "CONFIRM_FORGOT_PASSWORD_FUNCTION_ROLE_ARN" {
   value = aws_iam_role.confirm_forgot_password_function_role.arn
 }
-output "CONFIRM_SIGN_UP_FUNCTION_ROLE_NAME" {
+output "CONFIRM_FORGOT_PASSWORD_FUNCTION_ROLE_NAME" {
   value = aws_iam_role.confirm_forgot_password_function_role.name
 }
 
