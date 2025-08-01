@@ -24,7 +24,8 @@ module "roles" {
 
 }
 
-# POlicy
+# POLICY
+
 module "policy" {
   source                                     = "./modules/policy"
   ENV                                        = var.ENV
