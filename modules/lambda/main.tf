@@ -142,3 +142,29 @@ resource "aws_lambda_function" "confirm_forgot_password_function" {
   }
   layers = local.layers
 }
+
+
+# =================================================================
+# Create a Lambda function for login
+# =========================================================================
+resource "aws_lambda_function" "login_function" {
+  filename         = "${path.module}/codes/zip/login.zip"
+  function_name    = "${var.RESOURCES_PREFIX}-login-${local.LAMBDA_VERSION}"
+  role             = var.LOGIN_FUNCTION_ROLE_ARN
+  handler          = "login.lambda_handler"
+  source_code_hash = data.archive_file.lambda_login_archive.output_base64sha256
+  runtime          = var.LAMBDA_JAVASCRIPT_VERSION
+  timeout          = 180
+  memory_size      = 1024
+
+  environment {
+    variables = {
+      ENV         = "${var.ENV}"
+      POOL_ID = var.POOL_ID
+      CLIENT_ID = var.CLIENT_ID
+      CLIENT_SECRET = var.CLIENT_SECRET
+      # MONGODB_URI = var.MONGODB_URI
+    }
+  }
+  layers = local.layers
+}

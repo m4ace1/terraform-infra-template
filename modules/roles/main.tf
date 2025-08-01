@@ -57,3 +57,24 @@ resource "aws_iam_role" "confirm_forgot_password_function_role" {
     ]
   })
 }
+
+
+# =================================================================
+#  LOGIN ROLE
+# =================================================================
+resource "aws_iam_role" "login_function_role" {
+  name = "LOGIN_FUNCTION_${var.RESOURCES_PREFIX}"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = "lambda.amazonaws.com"
+        }
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+}

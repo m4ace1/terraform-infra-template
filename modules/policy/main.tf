@@ -131,3 +131,8 @@ resource "aws_iam_role_policy_attachment" "lambda_confirm_forgot_password_functi
   role       = var.CONFIRM_FORGOT_PASSWORD_FUNCTION_ROLE_NAME
   policy_arn = aws_iam_policy.m4ace_lambda_policy.arn
 }
+
+resource "aws_iam_role_policy_attachment" "lambda_login_function_attachment" {
+  role       = var.LOGIN_FUNCTION_ROLE_NAME
+  policy_arn = aws_iam_policy.m4ace_lambda_policy.arn
+}

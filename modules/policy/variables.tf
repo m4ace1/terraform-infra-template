@@ -9,6 +9,7 @@ variable "CONFIRM_FORGOT_PASSWORD_FUNCTION_ROLE_NAME" {
 
 }
 
+variable "LOGIN_FUNCTION_ROLE_NAME" {}
 /*
   ____    ___   ____   _____ 
  / ___|  / _ \ |  _ \ | ____|
